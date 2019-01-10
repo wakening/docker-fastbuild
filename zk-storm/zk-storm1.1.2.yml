@@ -1,0 +1,65 @@
+version: '3.1'
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.13
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    restart: always
+    networks:
+      - wakening
+
+  nimbus:
+    image: storm:1.1.2
+    container_name: nimbus
+    command: storm nimbus
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    ports:
+      - 6627:6627
+    restart: always
+    networks:
+      - wakening
+
+  supervisor:
+    image: storm:1.1.2
+    container_name: supervisor
+    command: storm supervisor
+    depends_on:
+      - nimbus
+      - zookeeper
+    links:
+      - nimbus
+      - zookeeper
+    ports:
+      - 8000:8000
+      - 6700:6700
+      - 6701:6701
+      - 6702:6702
+      - 6703:6703
+    restart: always
+    networks:
+      - wakening
+
+  ui:
+    image: storm:1.1.2
+    container_name: ui
+    command: storm ui
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    ports:
+      - 8080:8080
+    restart: always
+    networks:
+      - wakening
+
+networks:
+  wakening:
+    driver: bridge

@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.13
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    restart: always
+    networks:
+      - wakening
+
+  kafka:
+    image: wurstmeister/kafka:2.11-0.10.2.2
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    ports:
+      - 9092:9092
+    restart: always
+    networks:
+      - wakening
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_CREATE_TOPICS: "test:1:1,test1:1:1"
+      
+networks:
+  wakening:
+    driver: bridge
