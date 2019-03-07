@@ -19,7 +19,7 @@ Table of Contents
 
 1. docker pull zookeeper:3.4.13
 2. docker pull wurstmeister/kafka:2.11-0.10.2.2
-3. docker-compose -f zk-kafka2.11-0.10.2.2.yml up
+3. docker-compose -f zk-kafka.yml up
 
 <a name="zookeeper-storm"></a>
 
@@ -27,7 +27,7 @@ Table of Contents
 
 1. docker pull zookeeper:3.4.13
 2. docker pull storm:1.2.2
-3. docker-compose -f zk-storm1.2.2.yml up
+3. docker-compose -f zk-storm.yml up
 4. [storm UI](http://localhost:8080)
 
 <a name="zookeeper-kafka-storm"></a>
