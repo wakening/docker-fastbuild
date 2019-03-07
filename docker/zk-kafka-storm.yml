@@ -12,8 +12,25 @@ services:
     networks:
       - wakening
 
+  kafka:
+    image: wurstmeister/kafka:2.11-0.10.2.2
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    ports:
+      - 9092:9092
+    restart: always
+    networks:
+      - wakening
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_CREATE_TOPICS: "test:1:1,test1:1:1"
+
   nimbus:
-    image: storm:1.1.2
+    image: storm:1.2.2
     container_name: nimbus
     command: storm nimbus
     depends_on:
@@ -27,7 +44,7 @@ services:
       - wakening
 
   supervisor:
-    image: storm:1.1.2
+    image: storm:1.2.2
     container_name: supervisor
     command: storm supervisor
     depends_on:
@@ -47,7 +64,7 @@ services:
       - wakening
 
   ui:
-    image: storm:1.1.2
+    image: storm:1.2.2
     container_name: ui
     command: storm ui
     depends_on:

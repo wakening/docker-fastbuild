@@ -1,0 +1,15 @@
+version: '3.1'
+services:
+  spark:
+    image: harisekhon/spark:1.6
+    container_name: spark
+    ports:
+      - 8080:8080
+      - 8081:8081
+    restart: always
+    networks:
+      - wakening
+
+networks:
+  wakening:
+    driver: bridge
