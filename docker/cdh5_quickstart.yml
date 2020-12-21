@@ -1,0 +1,41 @@
+#[root@quickstart /]# /home/cloudera/cloudera-manager --express
+#WARNING: It is highly recommended that you run Cloudera Express in a VM with at least 8 GB of RAM.
+
+#[root@quickstart /]# /home/cloudera/cloudera-manager --enterprise
+#WARNING: It is highly recommended that you run Cloudera Enterprise in a VM with at least 10 GB of RAM.
+
+version: '3.1'
+
+services:
+  cdh:
+    image: cloudera/quickstart:5.13.0
+    container_name: cdh
+    hostname: cloudera
+    privileged: true
+    ports:
+      - 8020:8020
+      - 8022:8022
+      - 7180:7180
+      - 21050:21050
+      - 50070:50070
+      - 50075:50075
+      - 50010:50010
+      - 50020:50020
+      - 8890:8890
+      - 60010:60010
+      - 10002:10002
+      - 25010:25010
+      - 25020:25020
+      - 18088:18088
+      - 8088:8088
+      - 19888:19888
+      - 7187:7187
+      - 11000:11000
+    restart: always
+    command: /usr/bin/docker-quickstart && /home/cloudera/cloudera-manager --enterprise && service ntpd start
+    networks:
+      - wakening
+
+networks:
+  wakening:
+    driver: bridge

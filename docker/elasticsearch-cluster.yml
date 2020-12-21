@@ -1,0 +1,90 @@
+# https://www.elastic.co/guide/en/elasticsearch/reference/5.6/docker.html#
+# https://github.com/elastic/kibana-docker/blob/5.6/build/kibana/config/kibana.yml
+
+# Default Kibana configuration from kibana-docker.
+# server.name: kibana
+# server.host: "0"
+# elasticsearch.url: http://elasticsearch:9200
+# elasticsearch.username: elastic
+# elasticsearch.password: changeme
+# xpack.monitoring.ui.container.elasticsearch.enabled: true
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+# discovery.zen.minimum_master_nodes: 1
+# cluster.name: "docker-cluster"
+# network.host: 0.0.0.0
+
+version: '3.1'
+services:
+  elasticsearch1:
+    image: elasticsearch:5.6.16-alpine
+    container_name: es1
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+#    mem_limit: 1g
+    volumes:
+      - F:\Tools\docker\volumes\elasticsearch\5.6-1\data:/data
+#      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - wakening
+
+  elasticsearch2:
+    image: elasticsearch:5.6.16-alpine
+    container_name: es2
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=es1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+#    mem_limit: 1g
+    volumes:
+      - F:\Tools\docker\volumes\elasticsearch\5.6-2\data:/data
+#      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - wakening
+
+  kibana:
+    image: kibana:5.6.13
+    container_name: kibana
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: es1
+      ELASTICSEARCH_URL: http://es1:9200
+      ELASTICSEARCH_USERNAME: admin
+      ELASTICSEARCH_PASSWORD: admin
+    depends_on:
+      - elasticsearch1
+      - elasticsearch2
+    links:
+      - elasticsearch1
+      - elasticsearch2
+    ports:
+      - 5601:5601
+#    volumes:
+#      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - wakening
+
+#volumes:
+#  esdata1:
+#    driver: local
+#  esdata2:
+#    driver: local
+
+networks:
+  wakening:
+    driver: bridge
